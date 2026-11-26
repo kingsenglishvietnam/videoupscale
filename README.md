@@ -17,10 +17,11 @@ losslessly, then upscale the joined file once.
 ## Usage
 
 ```powershell
-.\videoupscale2.ps1                          # every video in the folder, 2x, lossless
-.\videoupscale2.ps1 Genesis* -Crf 0,16       # lossless and compact versions in one go
-.\videoupscale2.ps1 clip.mp4 *.mov -Scale 3  # these files, 3x
-.\videoupscale2.ps1 clip.mp4 -Sharpen 0      # pure Lanczos, no sharpening
+.\videoupscale3.ps1                          # every video in the folder, 2x, lossless
+.\videoupscale3.ps1 Genesis* -Quality Both   # lossless and upload versions in one go
+.\videoupscale3.ps1 Genesis* -Quality Upload # compact upload file only
+.\videoupscale3.ps1 clip.mp4 *.mov -Scale 3  # these files, 3x
+.\videoupscale3.ps1 clip.mp4 -Sharpen 0      # pure Lanczos, no sharpening
 ```
 
 | Parameter | Default | Meaning |
@@ -29,11 +30,12 @@ losslessly, then upscale the joined file once.
 | `-Path` | current folder | Folder to look in; base for relative names |
 | `-Scale` | `2` | Upscale factor (fractions allowed; dimensions kept even) |
 | `-Sharpen` | `0.4` | CAS strength 0-1; `0` = off |
-| `-Crf` | `0` (lossless) | x264 quality; `16` is a good compact upload setting; several values make several versions |
+| `-Quality` | `Lossless` | `Lossless`, `Upload` (compact, CRF `-Crf`) or `Both` |
+| `-Crf` | `16` | x264 quality of the Upload version |
 | `-Force` | off | Overwrite existing outputs |
 
 Output goes next to the source, where N is the new short side (720x1280 at 2x -> 1440):
-lossless as `<name>_<N>p.mp4`, CRF n as `<name>_<N>p_crf<n>.mp4`, so both can coexist.
+lossless as `<name>_<N>p.mp4`, upload as `<name>_<N>p_crf<n>.mp4`, so both can coexist.
 Outputs are never upscaled again by a later run.
 
 ## Why upscale before uploading?
@@ -53,7 +55,7 @@ crossfades mix two scenes and can confuse them.
 
 - Lossless output (CRF 0) uses x264's High 4:4:4 Predictive profile: VLC, ffplay, editors and
   YouTube handle it; most built-in players (Windows Films & TV, QuickTime, phones) do not.
-  `-Crf 16` output (High 10) plays more widely.
+  `-Quality Upload` output (High 10) plays more widely.
 - If the source audio can't be stored in MP4 unchanged (e.g. PCM from a `.mov`), it is encoded
   to FLAC instead, which is still lossless.
 - Colour tags are copied from the source; other metadata (titles, comments) is not.
