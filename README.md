@@ -36,6 +36,41 @@ Scripts are versioned (`videoupscale1.ps1`, `videoupscale2.ps1`, ...); use the h
 | `-Crf` | `16` | x264 CRF of the Upload version |
 | `-Force` | off | Overwrite existing outputs |
 
+## Choosing files with wildcards
+
+Any argument can be a wildcard, and you can give as many as you like. The script expands
+them itself, so they need no quoting.
+
+```powershell
+.\videoupscale3.ps1 *.mp4                        # every MP4 in the folder
+.\videoupscale3.ps1 *.mp4 *.mov                  # MP4s and MOVs
+.\videoupscale3.ps1 trailer*                     # everything starting with "trailer"
+.\videoupscale3.ps1 *final*                      # anything with "final" in the name
+.\videoupscale3.ps1 scene?.mp4                   # scene1.mp4 ... scene9.mp4 (? = one character)
+.\videoupscale3.ps1 scene[1-3].mp4               # scene1, scene2, scene3 only
+.\videoupscale3.ps1 ep[0-9][0-9]*                # ep01..., ep02..., ep10..., any two digits
+.\videoupscale3.ps1 D:\Exports\*.mov             # wildcards in other folders too
+.\videoupscale3.ps1 intro.mp4 ep*.mp4 outro.mp4  # mix exact names and patterns
+```
+
+| Pattern | Matches |
+|---|---|
+| `*` | any run of characters, including none |
+| `?` | exactly one character |
+| `[abc]` | one of the listed characters |
+| `[1-3]` | one character in the range |
+
+Things handled for you:
+
+- **Outputs are skipped.** `*.mp4` won't re-upscale `video_1440p.mp4` or `video_1440p_crf16.mp4`
+  from an earlier run, so you can rerun the same command safely.
+- **No duplicates.** A file matched by two patterns is processed once.
+- **Only videos.** Wildcards pick up `.mp4 .m4v .mov .mkv .webm` and ignore everything else.
+- **Exact names win.** A file whose real name contains `[` or `]` is still found when you
+  type its full name.
+- **Typos are reported.** A pattern that matches nothing prints a warning instead of failing
+  silently.
+
 ## Output
 
 Files are written next to the source. `N` is the new short side (720x1280 at 2x gives 1440).
