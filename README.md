@@ -17,23 +17,24 @@ losslessly, then upscale the joined file once.
 ## Usage
 
 ```powershell
-.\videoupscale1.ps1                          # newest joined_* video in the folder, 2x, lossless
-.\videoupscale1.ps1 -Crf 16                  # same, compact high-quality upload file
-.\videoupscale1.ps1 clip.mp4 *.mov -Scale 3  # these files, 3x
-.\videoupscale1.ps1 clip.mp4 -Sharpen 0      # pure Lanczos, no sharpening
+.\videoupscale2.ps1                          # every video in the folder, 2x, lossless
+.\videoupscale2.ps1 Genesis* -Crf 0,16       # lossless and compact versions in one go
+.\videoupscale2.ps1 clip.mp4 *.mov -Scale 3  # these files, 3x
+.\videoupscale2.ps1 clip.mp4 -Sharpen 0      # pure Lanczos, no sharpening
 ```
 
 | Parameter | Default | Meaning |
 |---|---|---|
-| *(files)* | newest `joined_*` video | Names, paths or wildcards |
+| *(files)* | every video in the folder | Names, paths or wildcards |
 | `-Path` | current folder | Folder to look in; base for relative names |
 | `-Scale` | `2` | Upscale factor (fractions allowed; dimensions kept even) |
 | `-Sharpen` | `0.4` | CAS strength 0-1; `0` = off |
-| `-Crf` | `0` (lossless) | x264 quality; `16` is a good compact upload setting |
+| `-Crf` | `0` (lossless) | x264 quality; `16` is a good compact upload setting; several values make several versions |
 | `-Force` | off | Overwrite existing outputs |
 
-Output: `<name>_<N>p.mp4` next to the source, where N is the new short side
-(720x1280 at 2x -> `_1440p`). Outputs are never upscaled again by a later run.
+Output goes next to the source, where N is the new short side (720x1280 at 2x -> 1440):
+lossless as `<name>_<N>p.mp4`, CRF n as `<name>_<N>p_crf<n>.mp4`, so both can coexist.
+Outputs are never upscaled again by a later run.
 
 ## Why upscale before uploading?
 
